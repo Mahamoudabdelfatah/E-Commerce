@@ -38,16 +38,10 @@ let routes = createBrowserRouter([
 
 const App = () => {
 
-  const [counter, setCounter] = useState(0)
-  const incF = () => {
-    setCounter(counter + 1)
-  }
+  
 
   return (
     <>
-      <h1 className='text-center '>App</h1>
-      <h1 className='text-center text-red-400 text-3xl font-extrabold'>{counter}</h1>
-      <Button onClick={incF} >Increment</Button>
       <RouterProvider router={routes}></RouterProvider>
     </>
   )
