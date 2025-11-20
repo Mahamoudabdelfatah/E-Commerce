@@ -12,6 +12,9 @@ import Categories from './Pages/Categories/Categories'
 import NotFound from './Pages/NotFound/NotFound'
 import Orders from './Pages/Orders/Orders'
 import ProductDetailes from './Pages/ProductDetailes/ProductDetailes'
+import { Button } from '@material-tailwind/react'
+import { useState } from 'react'
+
 
 
 let routes = createBrowserRouter([
@@ -34,9 +37,17 @@ let routes = createBrowserRouter([
 
 
 const App = () => {
+
+  const [counter, setCounter] = useState(0)
+  const incF = () => {
+    setCounter(counter + 1)
+  }
+
   return (
     <>
-      <h1 className='text-center'>App</h1>
+      <h1 className='text-center '>App</h1>
+      <h1 className='text-center text-red-400 text-3xl font-extrabold'>{counter}</h1>
+      <Button onClick={incF} >Increment</Button>
       <RouterProvider router={routes}></RouterProvider>
     </>
   )
