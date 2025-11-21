@@ -12,26 +12,26 @@ import Categories from './Pages/Categories/Categories'
 import NotFound from './Pages/NotFound/NotFound'
 import Orders from './Pages/Orders/Orders'
 import ProductDetailes from './Pages/ProductDetailes/ProductDetailes'
-import { Button } from '@material-tailwind/react'
-import { useState } from 'react'
 import Checkout from './Pages/Checkout/Checkout'
 import Account from './Pages/Account/Account'
+import ProtectedRoute from './auth/ProtectedRoute/ProtectedRoute'
+import UserContextProvider from './Context/UserContext'
 
 
 
 let routes = createBrowserRouter([
   {
     path: "", element: <Layout />, children: [
-      { index: true, element: <Home /> },
-      { path: "products", element: <Products /> },
-      { path: "productdetailes", element: <ProductDetailes /> },
-      { path: "categories", element: <Categories /> },
+      { index: true, element: <ProtectedRoute><Home /></ProtectedRoute> },
+      { path: "products", element: <ProtectedRoute><Products /></ProtectedRoute> },
+      { path: "productdetailes", element: <ProtectedRoute><ProductDetailes /></ProtectedRoute> },
+      { path: "categories", element: <ProtectedRoute><Categories /></ProtectedRoute> },
       { path: "login", element: <Login /> },
-      { path: "account", element: <Account /> },
       { path: "register", element: <Register /> },
-      { path: "cart", element: <Cart /> },
-      { path: "checkout", element: <Checkout /> },
-      { path: "orders", element: <Orders /> },
+      { path: "account", element: <ProtectedRoute><Account /> </ProtectedRoute> },
+      { path: "cart", element: <ProtectedRoute><Cart /></ProtectedRoute> },
+      { path: "checkout", element: <ProtectedRoute><Checkout /></ProtectedRoute> },
+      { path: "orders", element: <ProtectedRoute><Orders /></ProtectedRoute> },
       { path: "about", element: <About /> },
       { path: "contact", element: <Contact /> },
       { path: "*", element: <NotFound /> },
@@ -46,7 +46,9 @@ const App = () => {
 
   return (
     <>
-      <RouterProvider router={routes}></RouterProvider>
+      <UserContextProvider>
+        <RouterProvider router={routes}></RouterProvider>
+      </UserContextProvider>
     </>
   )
 }

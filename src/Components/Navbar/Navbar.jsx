@@ -1,14 +1,24 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { FiUser, FiLogOut } from "react-icons/fi";
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Avatar, Button, Menu, MenuHandler, MenuItem, MenuList, Typography, } from "@material-tailwind/react";
+import { UserContext } from '../../Context/UserContext';
+
 
 
 
 const Navbar = () => {
 
     const navigate = useNavigate();
+
+    let { userLogin, setUserLogin } = useContext(UserContext)
+
+    function logOut() {
+        localStorage.removeItem("userToken")
+        setUserLogin(null)
+        navigate("/login")
+    }
 
 
     return (
@@ -18,36 +28,38 @@ const Navbar = () => {
             <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                 <h1 className="text-2xl font-bold hover:text-[#DB4444] cursor-pointer ">Exclusive</h1>
                 <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-                    {/* Cart Icon */}
-                    <NavLink to="/cart" ><MdOutlineShoppingCart className='text-3xl cursor-pointer mr-2' /></NavLink>
-                    {/* Account Icon */}
+                    {userLogin !== null ? <>
 
-                    <Menu>
-                        <MenuHandler>
-                            <Avatar
-                                src="/user.png"
-                                alt="User avatar"
-                                className="cursor-pointer w-8 h-8 hover:scale-105"
-                            />
-                        </MenuHandler>
-                        <MenuList className="bg-white rounded-lg shadow-lg">
-                            <MenuItem className="flex items-center gap-2 hover:bg-gray-100">
-                                <NavLink to="/account" className="flex">
-                                    <FiUser />
-                                    <Typography variant="small" className="font-medium">
-                                        <span> Welcome Mahmoud</span>
+                        {/* Cart Icon */}
+                        <NavLink to="/cart" ><MdOutlineShoppingCart className='text-3xl cursor-pointer mr-2' /></NavLink>
+                        {/* Account Icon */}
+                        <Menu>
+                            <MenuHandler>
+                                <Avatar
+                                    src="/user.png"
+                                    alt="User avatar"
+                                    className="cursor-pointer w-8 h-8 hover:scale-105"
+                                />
+                            </MenuHandler>
+                            <MenuList className="bg-white rounded-lg shadow-lg">
+                                <MenuItem className="flex items-center gap-2 hover:bg-gray-100">
+                                    <NavLink to="/account" className="flex">
+                                        <FiUser />
+                                        <Typography variant="small" className="font-medium">
+                                            <span> Welcome Mahmoud</span>
+                                        </Typography>
+                                    </NavLink>
+                                </MenuItem>
+                                <hr className="my-2 border-gray-200" />
+                                <MenuItem className="flex items-center gap-2 hover:bg-gray-100" onClick={logOut}>
+                                    <FiLogOut />
+                                    <Typography variant="small" className="font-medium"  >
+                                        Sign Out
                                     </Typography>
-                                </NavLink>
-                            </MenuItem>
-                            <hr className="my-2 border-gray-200" />
-                            <MenuItem className="flex items-center gap-2 hover:bg-gray-100">
-                                <FiLogOut />
-                                <Typography variant="small" className="font-medium">
-                                    Sign Out
-                                </Typography>
-                            </MenuItem>
-                        </MenuList>
-                    </Menu>
+                                </MenuItem>
+                            </MenuList>
+                        </Menu>
+                    </> : null}
 
                     <button data-collapse-toggle="navbar-sticky" type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-sticky" aria-expanded="false">
                         <span className="sr-only">Open main menu</span>
@@ -58,18 +70,26 @@ const Navbar = () => {
                 </div>
                 <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-sticky">
                     <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-                        <li>
-                            <NavLink to="/" className="font-bold block py-2 px-3 text-white bg-[#DB4444] rounded-sm md:bg-transparent md:text-[#DB4444] md:p-0" aria-current="page">Home</NavLink>
-                        </li>
+                        {userLogin !== null ? <>
+                            <li>
+                                <NavLink to="/" className="font-bold block py-2 px-3 text-white bg-[#DB4444] rounded-sm md:bg-transparent md:text-[#DB4444] md:p-0" aria-current="page">Home</NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/products" className="font-bold block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-[#DB4444] md:p-0 md:dark:hover:text-[#DB4444] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Products</NavLink>
+                            </li></> : null}
                         <li>
                             <NavLink to="/about" className="font-bold block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-[#DB4444] md:p-0 md:dark:hover:text-[#DB4444] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">About</NavLink>
                         </li>
                         <li>
                             <NavLink to="/contact" className="font-bold block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-[#DB4444] md:p-0 md:dark:hover:text-[#DB4444] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Contact</NavLink>
                         </li>
-                        <li>
-                            <NavLink to="/register" className="font-bold block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-[#DB4444] md:p-0 md:dark:hover:text-[#DB4444] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Sign Up</NavLink>
-                        </li>
+                        {userLogin === null ? <>
+                            <li>
+                                <NavLink to="/register" className="font-bold block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-[#DB4444] md:p-0 md:dark:hover:text-[#DB4444] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Sign Up</NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/login" className="font-bold block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-[#DB4444] md:p-0 md:dark:hover:text-[#DB4444] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Login</NavLink>
+                            </li></> : null}
                     </ul>
                 </div>
             </div>
