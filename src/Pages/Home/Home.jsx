@@ -1,9 +1,9 @@
 import React from 'react'
 
-const Home = () => {
+function Home() {
   return (
-    <div> 
-      Homa
+    <div>
+      Home
     </div>
   )
 }

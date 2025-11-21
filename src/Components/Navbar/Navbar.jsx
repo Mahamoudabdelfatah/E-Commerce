@@ -11,7 +11,7 @@ import { Cog6ToothIcon, InboxArrowDownIcon, LifebuoyIcon, PowerIcon, UserCircleI
 const Navbar = () => {
 
     const navigate = useNavigate();
-    
+
     // profile menu component
     const profileMenuItems = [
         {
@@ -29,7 +29,7 @@ const Navbar = () => {
             label: "Help",
             icon: LifebuoyIcon,
         },
-    
+
         {
             label: "Sign Out",
             icon: PowerIcon,
@@ -44,7 +44,7 @@ const Navbar = () => {
     return (
 
 
-        <nav className="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600 shadow-md  ">
+        <nav className="bg-white  dark:bg-gray-900 fixed  left-0 w-full  z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600 shadow-md  ">
             <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                 <h1 className="text-2xl font-bold hover:text-[#DB4444] cursor-pointer ">Exclusive</h1>
                 <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
