@@ -1,44 +1,14 @@
 import React from 'react'
 import { MdOutlineShoppingCart } from "react-icons/md";
-import { MdOutlineAccountCircle } from "react-icons/md";
-
+import { FiUser, FiLogOut } from "react-icons/fi";
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Avatar, Button, Menu, MenuHandler, MenuItem, MenuList, Typography, } from "@material-tailwind/react";
-import { Cog6ToothIcon, InboxArrowDownIcon, LifebuoyIcon, PowerIcon, UserCircleIcon, } from "@heroicons/react/24/solid";
 
 
 
 const Navbar = () => {
 
     const navigate = useNavigate();
-
-    // profile menu component
-    const profileMenuItems = [
-        {
-            label: "My Profile",
-            icon: UserCircleIcon,
-        },
-        {
-            label: "Edit Profile",
-            icon: Cog6ToothIcon,
-        }, {
-            label: "Inbox",
-            icon: InboxArrowDownIcon,
-        },
-        {
-            label: "Help",
-            icon: LifebuoyIcon,
-        },
-
-        {
-            label: "Sign Out",
-            icon: PowerIcon,
-        },
-    ];
-
-    const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-
-    const closeMenu = () => setIsMenuOpen(false);
 
 
     return (
@@ -51,45 +21,34 @@ const Navbar = () => {
                     {/* Cart Icon */}
                     <NavLink to="/cart" ><MdOutlineShoppingCart className='text-3xl cursor-pointer mr-2' /></NavLink>
                     {/* Account Icon */}
-                    <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
+
+                    <Menu>
                         <MenuHandler>
-                            <Button
-
-                                className="flex items-center rounded-full p-0"
-                            >
-                                <MdOutlineAccountCircle className='text-3xl' />
-
-                            </Button>
+                            <Avatar
+                                src="/user.png"
+                                alt="User avatar"
+                                className="cursor-pointer w-8 h-8 hover:scale-105"
+                            />
                         </MenuHandler>
-                        <MenuList className="p-1">
-                            {profileMenuItems.map(({ label, icon }, key) => {
-                                const isLastItem = key === profileMenuItems.length - 1;
-                                return (
-                                    <MenuItem
-                                        key={label}
-                                        onClick={closeMenu}
-                                        className={`flex items-center gap-2 rounded ${isLastItem
-                                            ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
-                                            : ""
-                                            }`}
-                                    >
-                                        {React.createElement(icon, {
-                                            className: `h-4 w-4 ${isLastItem ? "text-red-500" : ""}`,
-                                            strokeWidth: 2,
-                                        })}
-                                        <Typography
-                                            as="span"
-                                            variant="small"
-                                            className="font-normal"
-                                            color={isLastItem ? "red" : "inherit"}
-                                        >
-                                            {label}
-                                        </Typography>
-                                    </MenuItem>
-                                );
-                            })}
+                        <MenuList className="bg-white rounded-lg shadow-lg">
+                            <MenuItem className="flex items-center gap-2 hover:bg-gray-100">
+                                <NavLink to="/account" className="flex">
+                                    <FiUser />
+                                    <Typography variant="small" className="font-medium">
+                                        <span> Welcome Mahmoud</span>
+                                    </Typography>
+                                </NavLink>
+                            </MenuItem>
+                            <hr className="my-2 border-gray-200" />
+                            <MenuItem className="flex items-center gap-2 hover:bg-gray-100">
+                                <FiLogOut />
+                                <Typography variant="small" className="font-medium">
+                                    Sign Out
+                                </Typography>
+                            </MenuItem>
                         </MenuList>
                     </Menu>
+
                     <button data-collapse-toggle="navbar-sticky" type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-sticky" aria-expanded="false">
                         <span className="sr-only">Open main menu</span>
                         <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">

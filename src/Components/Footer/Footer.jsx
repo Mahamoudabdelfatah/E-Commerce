@@ -22,7 +22,7 @@ const Footer = () => {
         { name: "Login / Register", to: "/signin" },
         { name: "Cart", to: "/cart" },
         { name: "Wishlist", to: "/wishlist" },
-        { name: "Shop", to: "/product" },
+        { name: "Shop", to: "/products" },
         { name: "admin panel", to: "/admin-signin" },
       ],
     },

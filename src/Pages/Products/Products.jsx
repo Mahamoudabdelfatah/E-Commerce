@@ -1,10 +1,11 @@
 import React from 'react'
+import RecentProducts from '../RecentProducts/RecentProducts'
 
 const Products = () => {
   return (
-    <div>
-      Products Page
-    </div>
+    <>
+      <RecentProducts />
+    </>
   )
 }
 

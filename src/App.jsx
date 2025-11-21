@@ -14,6 +14,8 @@ import Orders from './Pages/Orders/Orders'
 import ProductDetailes from './Pages/ProductDetailes/ProductDetailes'
 import { Button } from '@material-tailwind/react'
 import { useState } from 'react'
+import Checkout from './Pages/Checkout/Checkout'
+import Account from './Pages/Account/Account'
 
 
 
@@ -25,8 +27,10 @@ let routes = createBrowserRouter([
       { path: "productdetailes", element: <ProductDetailes /> },
       { path: "categories", element: <Categories /> },
       { path: "login", element: <Login /> },
+      { path: "account", element: <Account /> },
       { path: "register", element: <Register /> },
       { path: "cart", element: <Cart /> },
+      { path: "checkout", element: <Checkout /> },
       { path: "orders", element: <Orders /> },
       { path: "about", element: <About /> },
       { path: "contact", element: <Contact /> },
@@ -38,7 +42,7 @@ let routes = createBrowserRouter([
 
 const App = () => {
 
-  
+
 
   return (
     <>
