@@ -16,6 +16,8 @@ import Checkout from './Pages/Checkout/Checkout'
 import Account from './Pages/Account/Account'
 import ProtectedRoute from './auth/ProtectedRoute/ProtectedRoute'
 import UserContextProvider from './Context/UserContext'
+import CartContextProvider from './Context/CartContext'
+import toast, { Toaster } from 'react-hot-toast';
 
 
 
@@ -24,8 +26,8 @@ let routes = createBrowserRouter([
     path: "", element: <Layout />, children: [
       { index: true, element: <ProtectedRoute><Home /></ProtectedRoute> },
       { path: "products", element: <ProtectedRoute><Products /></ProtectedRoute> },
-      { path: "productdetailes", element: <ProtectedRoute><ProductDetailes /></ProtectedRoute> },
-      { path: "categories", element: <ProtectedRoute><Categories /></ProtectedRoute> },
+      { path: "productdetailes/:id/:category", element: <ProtectedRoute><ProductDetailes /></ProtectedRoute> },
+      { path: "category/:id", element: <ProtectedRoute><Categories /></ProtectedRoute> },
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
       { path: "account", element: <ProtectedRoute><Account /> </ProtectedRoute> },
@@ -47,7 +49,10 @@ const App = () => {
   return (
     <>
       <UserContextProvider>
-        <RouterProvider router={routes}></RouterProvider>
+        <CartContextProvider>
+          <RouterProvider router={routes}></RouterProvider>
+          <Toaster position="top-right" reverseOrder={false} />
+        </CartContextProvider>
       </UserContextProvider>
     </>
   )
