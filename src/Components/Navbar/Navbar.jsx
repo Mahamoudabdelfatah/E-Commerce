@@ -4,6 +4,7 @@ import { FiUser, FiLogOut } from "react-icons/fi";
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Avatar, Button, Menu, MenuHandler, MenuItem, MenuList, Typography, } from "@material-tailwind/react";
 import { UserContext } from '../../Context/UserContext';
+import { CartContext } from '../../Context/CartContext';
 
 
 
@@ -13,6 +14,7 @@ const Navbar = () => {
     const navigate = useNavigate();
 
     let { userLogin, setUserLogin } = useContext(UserContext)
+    let { cartCount } = useContext(CartContext)
 
     function logOut() {
         localStorage.removeItem("userToken")
@@ -31,7 +33,17 @@ const Navbar = () => {
                     {userLogin !== null ? <>
 
                         {/* Cart Icon */}
-                        <NavLink to="/cart" ><MdOutlineShoppingCart className='text-3xl cursor-pointer mr-2' /></NavLink>
+                        <div className="relative mr-1">
+                            <NavLink to="/cart">
+                                <MdOutlineShoppingCart className="text-3xl hover:scale-105 hover:cursor-pointer" />
+                            </NavLink>
+
+                            {/* Badge */}
+                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                                {cartCount}
+                            </span>
+                        </div>
+
                         {/* Account Icon */}
                         <Menu>
                             <MenuHandler>
@@ -76,7 +88,11 @@ const Navbar = () => {
                             </li>
                             <li>
                                 <NavLink to="/products" className="font-bold block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-[#DB4444] md:p-0 md:dark:hover:text-[#DB4444] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Products</NavLink>
-                            </li></> : null}
+                            </li>
+                            <li>
+                                <NavLink to="/allorders" className="font-bold block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-[#DB4444] md:p-0 md:dark:hover:text-[#DB4444] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Orders</NavLink>
+                            </li>
+                        </> : null}
                         <li>
                             <NavLink to="/about" className="font-bold block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-[#DB4444] md:p-0 md:dark:hover:text-[#DB4444] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">About</NavLink>
                         </li>

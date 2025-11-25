@@ -1,11 +1,140 @@
-import { Link } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { CartContext } from "../../Context/CartContext";
+import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
+import { useFormik } from "formik";
+import axios from "axios";
+import { ClimbingBoxLoader } from "react-spinners";
+import Swal from "sweetalert2";
+import * as Yup from 'yup';
+
+
 
 const Checkout = () => {
-  return (
-    <div className="container mx-auto p-5">
+  const { getLoggedUserCart, clearCartAfterOrder } = useContext(CartContext);
 
-      {/* Breadcrumb */}
+  const [cartItems, setCartItems] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [isloading, setIsLoading] = useState(true);
+  const [cartId, setCartId] = useState(null);
+  const [orderType, setOrderType] = useState(null)
+  const navigate = useNavigate()
+
+  let headers;
+  if (localStorage.getItem("userToken")) {
+    headers = {
+      token: localStorage.getItem("userToken"),
+    };
+  }
+
+  // -------- CREATE CASH ORDER --------
+  async function createCashOrder(values) {
+    console.log("====================Cash");
+
+    try {
+      let { data } = await axios.post(
+        `https://ecommerce.routemisr.com/api/v1/orders/${cartId}`,
+        values, // Correct body
+        {
+          headers: headers, // Correct headers
+        }
+      );
+
+      console.log(data);
+
+      if (data.status === "success") {
+        clearCartAfterOrder()
+        setCartItems([])
+        setTotalPrice(0)
+        Swal.fire({
+          icon: "success",
+          title: "Order Created",
+          text: "Your order has been placed successfully!",
+          timer: 2000,
+          showConfirmButton: false,
+          position: "top-end"
+        });
+      }
+      navigate("/allorders")
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  // -------- CREATE Online ORDER --------
+  async function createOnlineOrder(values) {
+    console.log("====================Online");
+    try {
+      let { data } = await axios.post(
+        `https://ecommerce.routemisr.com/api/v1/orders/checkout-session/${cartId}?url=http://localhost:5173`,
+        values, // Correct body
+        {
+          headers: headers, // Correct headers
+        }
+      );
+
+      console.log(data);
+      // toast.loading("Loading...");
+      Swal.fire({
+        icon: "info",
+        title: "Redirecting...",
+        text: "You will be redirected to the payment page",
+        timer: 3000,
+        showConfirmButton: false,
+        position: "top-end"
+      });
+      setTimeout(() => {
+
+        if (data.status === "success") {
+          window.location.href = data.session.url
+        }
+      }, 3000)
+    } catch (error) {
+      console.log(error);
+    }
+
+  }
+
+  // let validationSchema = Yup.object().shape({
+  //   city : Yup.string().min(4,"Min Length City is 3").max(15,"Max Length City is 15").required("City is Required"),
+  //   phone: Yup.string().matches(/^01[0125][0-9]{8}$/, "Phone Not Egyption Number").required("Phone is Required"),
+  //   details : Yup.string().min(8,"Min Length City is 3").max(50,"Max Length City is 50").required("Detailes is Required"),
+  // })
+
+  const formik = useFormik({
+    initialValues: {
+      shippingAddress: {
+        city: "",
+        phone: "",
+        details: "",
+      },
+    },
+
+    onSubmit: (values) => {
+      orderType === "cash" ? createCashOrder(values) : createOnlineOrder(values);
+
+    },
+  });
+
+  useEffect(() => {
+    getLoggedUserCart().then((res) => {
+      setCartItems(res?.data?.data?.products || []);
+      setTotalPrice(res?.data?.data?.totalCartPrice || 0);
+      setCartId(res?.data?.data?._id || null);
+      setIsLoading(false);
+    });
+  }, []);
+
+  if (isloading) {
+    return (
+      <div className="flex justify-center items-center py-[10rem]">
+        <ClimbingBoxLoader color="#bd4444" size={50} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white py-5">
       <div className="flex gap-3 my-5 text-sm text-gray-500 flex-wrap">
         <Link to="/account">Account</Link>
         <span>/</span>
@@ -15,159 +144,140 @@ const Checkout = () => {
         <span>/</span>
         <Link to="/cart">View Cart</Link>
         <span>/</span>
-        <span className="font-medium text-black">CheckOut</span>
+        <Link className="font-medium text-black">CheckOut</Link>
       </div>
 
-      <h1 className="mb-4 text-2xl font-bold">Billing Details</h1>
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-8">
 
-      <div className="flex flex-wrap justify-between">
-
-        {/* LEFT SIDE */}
-        <div className="w-full md:w-1/2 pr-5 mb-5 md:mb-0">
-
-          <label className="block mb-2 text-sm font-medium">First Name</label>
-          <input
-            type="text"
-            className="mb-4 bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5"
-          />
-
-          <label className="block mb-2 text-sm font-medium">Company Name</label>
-          <input
-            type="text"
-            className="mb-4 bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5"
-          />
-
-          <label className="block mb-2 text-sm font-medium">Street Address</label>
-          <input
-            type="text"
-            className="mb-4 bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5"
-          />
-
-          <label className="block mb-2 text-sm font-medium">
-            Apartment, floor, etc. (optional)
-          </label>
-          <input
-            type="text"
-            className="mb-4 bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5"
-          />
-
-          <label className="block mb-2 text-sm font-medium">Town/City</label>
-          <input
-            type="text"
-            className="mb-4 bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5"
-          />
-
-          <label className="block mb-2 text-sm font-medium">Phone Number</label>
-          <input
-            type="text"
-            className="mb-4 bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5"
-          />
-
-          <label className="block mb-2 text-sm font-medium">Email Address</label>
-          <input
-            type="email"
-            className="mb-4 bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5"
-          />
-
-          <div className="flex items-center mt-3">
-            <input type="checkbox" className="w-4 h-4" />
-            <p className="ml-2 text-sm">
-              Save this information for faster check-out next time
-            </p>
-          </div>
-        </div>
-
-        {/* RIGHT SIDE */}
-        <div className="w-full md:w-1/2 pl-5">
-
-          {/* EMPTY CART DESIGN */}
-          <div className="flex flex-col justify-center items-center pt-5">
-            <ShoppingCartIcon className="w-20 h-20 text-red-500 mb-4" />
-            <h2 className="text-2xl font-semibold mb-2 text-center">
-              Your cart is empty
+          {/* LEFT FORM */}
+          <div>
+            <h2 className="text-base font-semibold leading-7 text-gray-900">
+              Contact information
             </h2>
-            <p className="mb-6 text-gray-500 text-center">
-              Looks like you haven’t added anything to your cart yet.
-            </p>
-            <Link
-              to="/product"
-              className="inline-block bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg text-sm font-medium transition duration-300"
-            >
-              Return to Shop
-            </Link>
-          </div>
 
-          {/* CART SUMMARY (STATIC EXAMPLE) */}
-          <div className="mt-8">
+            <form className="mt-10" onSubmit={formik.handleSubmit}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-8">
 
-            <div className="flex justify-between mb-4">
-              <div className="flex items-center space-x-3">
-                <img src="/example.png" alt="Product" className="w-12 h-12" />
-                <p className="text-sm">Product Title Here</p>
-              </div>
-              <p className="text-sm">1500 EGP</p>
-            </div>
-
-            <div className="border-t border-gray-400 py-2">
-              <div className="flex justify-between py-2">
-                <p className="text-sm">Subtotal:</p>
-                <p className="text-sm">1500 EGP</p>
-              </div>
-
-              <div className="border-t border-gray-300 py-2 flex justify-between">
-                <p className="text-sm">Shipping:</p>
-                <p className="text-sm">Free</p>
-              </div>
-
-              <div className="border-t border-gray-300 py-2 flex justify-between font-bold">
-                <p className="text-sm">Total:</p>
-                <p className="text-sm">1500 EGP</p>
-              </div>
-            </div>
-
-            {/* PAYMENT METHODS */}
-            <div className="flex items-center mt-4">
-              <input type="radio" className="w-5 h-5" name="payment" />
-              <p className="ml-2 text-sm">Bank</p>
-            </div>
-
-            <div className="flex justify-end gap-3 mt-2">
-              <img src="/Visa.png" className="w-10" />
-              <img src="/Bank.png" className="w-10" />
-              <img src="/instapay.png" className="h-16" />
-              <img src="/fawry.jpeg" className="w-10" />
-            </div>
-
-            <div className="flex items-center mt-2">
-              <input type="radio" className="w-5 h-5" name="payment" />
-              <p className="ml-2 text-sm">Cash on delivery</p>
-            </div>
-
-            {/* COUPON */}
-            <div className="flex mt-4">
-              <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
-                <form className="flex space-x-4">
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium">City</label>
                   <input
                     type="text"
-                    placeholder="Coupon Code"
-                    className="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900"
+                    className="mt-2 block w-full border-0 py-1.5 px-3 bg-gray-100 rounded-lg outline-none"
+                    name="shippingAddress.city"
+                    value={formik.values.shippingAddress.city}
+                    onChange={formik.handleChange}
+                    required
                   />
-                  <button
-                    type="button"
-                    className="rounded-lg bg-red-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-700"
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium">Phone</label>
+                  <input
+                    type="tel"
+                    className="mt-2 block w-full border-0 py-1.5 px-3 bg-gray-100 rounded-lg outline-none"
+                    name="shippingAddress.phone"
+                    value={formik.values.shippingAddress.phone}
+                    onChange={formik.handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium">Details</label>
+                  <textarea
+                    className="mt-2 block w-full border-0 py-1.5 px-3 bg-gray-100 rounded-lg outline-none"
+                    name="shippingAddress.details"
+                    value={formik.values.shippingAddress.details}
+                    onChange={formik.handleChange}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="mt-10 flex justify-end">
+                <button
+                  type="submit"
+                  className="rounded-md bg-red-600 mr-4 px-6 py-3 text-sm font-semibold text-white shadow hover:bg-red-700"
+                  onClick={() => { setOrderType("cash") }}
+                >
+                  Cash Order
+                </button>
+
+                <button
+                  type="submit"
+                  className="rounded-md bg-red-600 px-6 py-3 text-sm font-semibold text-white shadow hover:bg-red-700"
+                  onClick={() => { setOrderType("online") }}
+                >
+                  Online Order
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* RIGHT SUMMARY */}
+          <div className="lg:ml-10">
+            <h3 className="text-xl font-semibold text-gray-900 mb-6 text-center">
+              Order summary
+            </h3>
+
+            <div className="space-y-4 border-b pb-4">
+              {cartItems.length > 0 ? (
+                cartItems.map((item) => (
+                  <div key={item._id} className="flex justify-between items-center">
+                    <div className="flex items-center space-x-3">
+                      <img
+                        src={item.product.imageCover}
+                        alt={item.product.title}
+                        className="w-14 h-14 rounded-lg object-cover"
+                      />
+                      <div>
+                        <p className="text-sm font-medium">{item.product.title}</p>
+                        <p className="text-xs text-gray-500">Quantity: {item.count}</p>
+                        <p className="text-xs text-gray-500">Price: {item.price}</p>
+                      </div>
+                    </div>
+
+                    <p className="text-sm font-semibold">
+                      ${item.price * item.count}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <div className="flex flex-col items-center text-center">
+                  <ShoppingCartIcon className="w-20 h-20 text-red-500 mb-4" />
+                  <h2 className="text-2xl font-semibold mb-2">Your cart is empty</h2>
+                  <p className="mb-6 text-gray-500 max-w-md">
+                    Looks like you haven't added anything yet.
+                  </p>
+                  <Link
+                    to="/products"
+                    className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg"
                   >
-                    Apply Coupon
-                  </button>
-                </form>
+                    Continue Shopping
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-6 space-y-3">
+              <div className="flex justify-between text-sm">
+                <p>Subtotal</p>
+                <p className="font-medium">${totalPrice}</p>
+              </div>
+
+              <div className="flex justify-between text-sm">
+                <p>Delivery</p>
+                <p className="font-medium">$0</p>
+              </div>
+
+              <div className="flex justify-between text-base font-semibold">
+                <p>Total</p>
+                <p>${totalPrice}</p>
               </div>
             </div>
 
-            {/* PLACE ORDER */}
-            <button className="w-full mt-4 bg-red-600 text-white py-3 rounded hover:bg-red-800">
-              Place Order
-            </button>
           </div>
-
         </div>
       </div>
     </div>

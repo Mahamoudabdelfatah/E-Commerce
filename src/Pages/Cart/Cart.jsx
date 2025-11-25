@@ -5,6 +5,9 @@ import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import Swal from "sweetalert2";
 import { CartContext } from "../../Context/CartContext";
 import { FaTrash } from "react-icons/fa6";
+import { ClimbingBoxLoader } from 'react-spinners'
+
+
 
 
 
@@ -13,11 +16,14 @@ const Cart = () => {
   let { getLoggedUserCart, updateCartCount, removeProductToCart, clearAllCart } = useContext(CartContext);
 
   const [cartDetailes, setCartDetailes] = useState(null)
+  const [isloading, setIsLoading] = useState(true)
+
 
   async function getLoggedUserCartItem() {
     let response = await getLoggedUserCart()
     console.log(response.data.data);
     setCartDetailes(response.data.data)
+    setIsLoading(false)
   }
 
   async function updateCartCountItem(productId, count, update) {
@@ -37,6 +43,7 @@ const Cart = () => {
   async function removeProductToCartItem(productId) {
     let response = await removeProductToCart(productId)
     setCartDetailes(response.data.data)
+
     Swal.fire({
       icon: "success",
       title: "Removed Product",
@@ -63,6 +70,7 @@ const Cart = () => {
         let response = await clearAllCart();
         setCartDetailes(response.data.data);
 
+
         Swal.fire({
           title: "Deleted!",
           text: "Your cart has been cleared.",
@@ -75,6 +83,14 @@ const Cart = () => {
   useEffect(() => {
     getLoggedUserCartItem()
   }, [])
+
+  if (isloading) {
+    return (
+      <div className='flex justify-center items-center py-[10rem]'>
+        <ClimbingBoxLoader color='#bd4444' size={50} />
+      </div>
+    )
+  }
 
 
 

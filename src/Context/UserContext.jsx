@@ -6,6 +6,8 @@ import { createContext } from "react";
 export let UserContext = createContext(0)
 
 export default function UserContextProvider(props) {
+
+    const[token,setToken] = useState(localStorage.getItem("userToken"))
     const [userLogin, setUserLogin] = useState(null)
     useEffect(() => {
         if (localStorage.getItem("userToken") !== null) {
@@ -15,8 +17,10 @@ export default function UserContextProvider(props) {
 
     
 
+    
+
     return (
-        <UserContext.Provider value={{ userLogin, setUserLogin }}>
+        <UserContext.Provider value={{ userLogin, setUserLogin , token , setToken }}>
             {props.children}
         </UserContext.Provider>
     )
